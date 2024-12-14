@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service-deployment
+  namespace: msoft-lab
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service
+  template:
+    metadata:
+      labels:
+        app: customer-service
+    spec:
+      containers:
+        - name: customer-service
+          image: msoft/customer-service:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGO_CONNECTION
+              value: mongodb://{}:{}@mongodb-service:27017/test?authSource=admin
+            - name: MONGO_USER
+              value: adminuser
+            - name: MONGO_PASSWORD
+              value: mysecret123
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP

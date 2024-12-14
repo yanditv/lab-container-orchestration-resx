@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+  namespace: msoft-lab
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:5.0
+          args: ["--dbpath", "/data/db"]
+          livenessProbe:
+            exec:
+              command:
+                - mongo
+                - --quiet
+                - --disableImplicitSessions
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - mongo
+                - --quiet
+                - --disableImplicitSessions
+                - --eval
+                - "db.adminCommand('ping')"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: adminuser
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: mysecret123
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: "mongo-data-dir"
+      volumes:
+        - name: "mongo-data-dir"
+          persistentVolumeClaim:
+            claimName: "mongodb-pvc"
