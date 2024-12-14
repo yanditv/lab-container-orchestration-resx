@@ -5,10 +5,10 @@ metadata:
   namespace: msoft-lab
 spec:
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-    type: RollingUpdate
   replicas: 1
   selector:
     matchLabels:
@@ -22,30 +22,26 @@ spec:
         - name: customer-service
           image: msoft/customer-service:latest
           imagePullPolicy: IfNotPresent
-          resources:
-            requests:
-              memory: "32Mi"
-              cpu: "100m"
           ports:
             - containerPort: 8000
           env:
             - name: MONGO_CONNECTION
-              value: mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@mongodb-service:27017/test?authSource=admin
+              value: "mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@mongodb-service:27017/test?authSource=admin"
             - name: MONGO_USER
               valueFrom:
                 secretKeyRef:
                   name: mongodb-secret
-                  key: username # username dentro del Secret
+                  key: MONGO_INITDB_ROOT_USERNAME
             - name: MONGO_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mongodb-secret
-                  key: password # clave dentro del Secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
             - name: POD_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name
+                  fieldPath: metadata.name # Obtiene el nombre del pod
             - name: POD_IP
               valueFrom:
                 fieldRef:
-                  fieldPath: status.podIP
+                  fieldPath: status.podIP # Obtiene la IP del pod
