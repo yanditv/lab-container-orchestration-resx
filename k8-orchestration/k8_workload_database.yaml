@@ -47,12 +47,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mongodb-secret
-                  key: username # username dentro del Secret
+                  key: username
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mongodb-secret
-                  key: password # clave dentro del Secret
+                  key: password
           volumeMounts:
             - mountPath: "/data/db"
               name: "mongo-data-dir"
