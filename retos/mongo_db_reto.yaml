@@ -5,5 +5,5 @@ metadata:
   namespace: msoft-lab
 type: Opaque
 data:
-  username: admin
-  password: admin123
+  username: YWRtaW4= #admin
+  password: YWRtaW4xMjM= #admin123 

@@ -44,9 +44,15 @@ spec:
             failureThreshold: 6
           env:
             - name: MONGO_INITDB_ROOT_USERNAME
-              value: adminuser
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: username # username dentro del Secret
             - name: MONGO_INITDB_ROOT_PASSWORD
-              value: mysecret123
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: password # clave dentro del Secret
           volumeMounts:
             - mountPath: "/data/db"
               name: "mongo-data-dir"

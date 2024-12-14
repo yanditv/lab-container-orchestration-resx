@@ -30,11 +30,17 @@ spec:
             - containerPort: 8000
           env:
             - name: MONGO_CONNECTION
-              value: mongodb://{}:{}@mongodb-service:27017/test?authSource=admin
+              value: mongodb://$(MONGO_USER):$(MONGO_PASSWORD)@mongodb-service:27017/test?authSource=admin
             - name: MONGO_USER
-              value: adminuser
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: username # username dentro del Secret
             - name: MONGO_PASSWORD
-              value: mysecret123
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: password # clave dentro del Secret
             - name: POD_NAME
               valueFrom:
                 fieldRef:
